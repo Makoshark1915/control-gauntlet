@@ -2,16 +2,17 @@
 Author: Joshua Dhaul
 Start Date: 2026-09-16
 End Date: NA
-Desc: this file is inted to be a test file for reciving the input for a single finger (intended for index finger) when a button is pressed.
-takes the input from the 3 pots on the finger and sends it throught the multi plexer( CD74HC4067) outputing the  values to the serial monitor for testing purposes.
-the segments of the fingers are counted from the tip of the finger to the base of the finger, so segment 1 is the tip and segment 3 is the base.
+Desc: this file is inted to be a test file for reciving the input for a single finger (intended for index finger)
+takes the input from the 4 pots on the finger and sends it throught the multi plexer (CD74HC4067) outputing the  values to the serial monitor for testing purposes.
+the segments of the fingers are counted from the tip of the finger to the base of the finger, so segment 1 is the tip and segment 3 is the base 
+segment 3 has an x and y component. whereas all other sements only have an x component.
 */
 #include <Arduino.h>
 
 
-float index[3];
+float index[]; //index array goes {segment 1, segment2, segment 3x, segment 3y}
 
-const byte muxInput = A0; // A0 is the input pin from the multiplexer
+const byte muxInput = A8; // A8 is the input pin from the multiplexer
 
 const byte muxS0 = 3; // defines pins 3 - 6 as the select pins for the multiplexer
 const byte muxS1 = 4;
@@ -20,7 +21,7 @@ const byte muxS3 = 6;
 
 
 
-const byte buttonPin = 2; // defines pin 2 as the input pin for the button
+
 
 void setup() {
   Serial.begin(9600); // begins serial communication at 9600 baud rate
@@ -30,32 +31,34 @@ void setup() {
   pinMode(muxS1, OUTPUT);
   pinMode(muxS2, OUTPUT);
   pinMode(muxS3, OUTPUT);
-  
-  pinMode(buttonPin, INPUT_PULLUP);
+
   
 }
 
 void loop() {
 
-  if(digitalRead(buttonPin) == LOW)
-  {
 
-  index[0] = muxRead(0); //reads the value from channes 0 - 2 of the multiplexer and stores them in the index array
-  index[1] = muxRead(1);
-  index[2] = muxRead(2);
+
+  for(int i = 0; i < 3; i++){
+
+    index[i] = muxRead(i); // updates the index array with the values read from the multiplexer for each channel (0-2)
+
+  }
 
   
   Serial.print("index 1: "); // out puts the values of the index array to the serial monitor
   Serial.print(index[0]);
   Serial.print("\tindex 2: ");
   Serial.print(index[1]);
-  Serial.print("\tindex 3: ");
-  Serial.println(index[2]);
+  Serial.print("\tindex 3x: ");
+  Serial.print(index[2]);
+  Serial.print("\tindex 3y: ");
+  Serial.println(index[3]);
 
   
-  }
-
 }
+
+
 
 
 float muxRead(int channel) { //function to read the value from the multiplexer
